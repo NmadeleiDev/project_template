@@ -1,0 +1,136 @@
+services:
+  traefik:
+    profiles:
+      - "backend"
+      - "app"
+    image: traefik:v3.6.2
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+
+  db:
+    profiles:
+      - "backend"
+      - "app"
+      - "create_migration"
+    image: postgres:18
+    volumes:
+      - ./local/postgres_data:/var/lib/postgresql
+    env_file:
+      - ./backend/.env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "app"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "5432:5432"
+
+  redis:
+    profiles:
+      - "backend"
+      - "app"
+      - "create_migration"
+    image: redis:8-alpine
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  migration:
+    profiles:
+      - "backend"
+      - "app"
+      - "create_migration"
+    build:
+      context: ./backend
+    command: python main.py upgrade-database
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+
+  backend:
+    profiles:
+      - "backend"
+      - "app"
+      - "create_migration"
+    build:
+      context: ./backend
+    command: python main.py serve --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migration:
+        condition: service_completed_successfully
+    healthcheck:
+      test: ["CMD", "python", "-c", "import http.client; conn = http.client.HTTPConnection('localhost', 8000); conn.request('GET', '/ping'); r = conn.getresponse(); exit(0 if r.status == 200 else 1)"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`app-local.com`) && PathPrefix(`/api`)"
+      - "traefik.http.middlewares.backend-strip.stripprefix.prefixes=/api"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
+      - "traefik.http.routers.backend.middlewares=backend-strip"
+
+  worker:
+    profiles:
+      - "backend"
+      - "app"
+    build:
+      context: ./backend
+    command: python main.py celery-worker
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  flower:
+    profiles:
+      - "backend"
+      - "app"
+    build:
+      context: ./backend
+      dockerfile: ./Dockerfile
+    command: python main.py flower
+    volumes:
+      - ./backend:/app
+    env_file:
+      - ./backend/.env
+    ports:
+      - "5555:5555"
+    depends_on:
+      redis:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.flower.rule=Host(`learrrner-local.com`) && PathPrefix(`/flower`)"
+      - "traefik.http.services.flower.loadbalancer.server.port=5555"
+      - "traefik.http.middlewares.flower-strip.stripprefix.prefixes=/flower"
+      - "traefik.http.routers.flower.middlewares=flower-strip"

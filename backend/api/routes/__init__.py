@@ -1,0 +1,3 @@
+"""
+Routes of the API.
+"""

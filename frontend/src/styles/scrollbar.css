@@ -1,0 +1,87 @@
+/**
+ * Custom Scrollbar Styles
+ * =======================
+ * Consistent scrollbar styling across browsers
+ */
+
+/* ══════════════════════════════════════════
+   WEBKIT BROWSERS (Chrome, Safari, Edge)
+   ══════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Corner piece */
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* ══════════════════════════════════════════
+   FIREFOX
+   ══════════════════════════════════════════ */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.1) rgba(255, 255, 255, 0.03);
+}
+
+/* ══════════════════════════════════════════
+   SCROLLBAR VARIANTS
+   ══════════════════════════════════════════ */
+
+/* Hidden scrollbar (but still scrollable) */
+.scrollbar-hidden::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hidden {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+/* Thin scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+/* Auto-hide scrollbar (appears on hover/scroll) */
+.scrollbar-auto {
+  scrollbar-width: none;
+}
+
+.scrollbar-auto::-webkit-scrollbar {
+  width: 0;
+  background: transparent;
+  transition: width 0.2s ease;
+}
+
+.scrollbar-auto:hover::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-auto:hover::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+}
+

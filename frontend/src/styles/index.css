@@ -1,0 +1,50 @@
+/**
+ * Main Styles Entry Point
+ * =======================
+ * Import this file in your main.ts to load all styles
+ * 
+ * Usage in main.ts:
+ *   import './styles/index.css'
+ */
+
+/* ══════════════════════════════════════════
+   EXTERNAL FONTS
+   ══════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap');
+
+/* ══════════════════════════════════════════
+   CORE STYLES (order matters!)
+   ══════════════════════════════════════════ */
+
+/* 1. Design tokens - must be first */
+@import './variables.css';
+
+/* 2. CSS Reset - normalize browser defaults */
+@import './reset.css';
+
+/* 3. Layout system - viewport lock and flex/grid */
+@import './layout.css';
+
+/* 4. Typography system */
+@import './typography.css';
+
+/* 5. Animations and transitions */
+@import './animations.css';
+
+/* ══════════════════════════════════════════
+   COMPONENTS
+   ══════════════════════════════════════════ */
+
+@import './components/buttons.css';
+@import './components/inputs.css';
+@import './components/cards.css';
+
+/* ══════════════════════════════════════════
+   UTILITIES & ENHANCEMENTS
+   ══════════════════════════════════════════ */
+
+@import './utilities.css';
+@import './scrollbar.css';
+@import './background.css';
+

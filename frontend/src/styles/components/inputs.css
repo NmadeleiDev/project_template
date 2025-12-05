@@ -1,0 +1,322 @@
+/**
+ * Form Inputs & Controls
+ * ======================
+ * Text inputs, textareas, selects, and form groups
+ */
+
+/* ══════════════════════════════════════════
+   FORM GROUP
+   ══════════════════════════════════════════ */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.form-group-inline {
+  flex-direction: row;
+  align-items: center;
+}
+
+/* Form stack (multiple form groups) */
+.form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-6);
+}
+
+/* ══════════════════════════════════════════
+   LABELS
+   ══════════════════════════════════════════ */
+
+.form-label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--text-secondary);
+  line-height: var(--leading-tight);
+}
+
+.form-label-required::after {
+  content: ' *';
+  color: var(--color-error-400);
+}
+
+/* ══════════════════════════════════════════
+   TEXT INPUT
+   ══════════════════════════════════════════ */
+
+.input {
+  display: block;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-input);
+  border: 1px solid var(--border-emphasis);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  line-height: var(--leading-normal);
+  transition: all var(--transition-normal);
+  min-height: 48px;
+}
+
+.input::placeholder {
+  color: var(--text-placeholder);
+}
+
+.input:hover:not(:disabled):not(:focus) {
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+.input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: var(--surface-elevated);
+}
+
+/* Input sizes */
+.input-sm {
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  min-height: 40px;
+  border-radius: var(--radius-md);
+}
+
+.input-lg {
+  padding: var(--space-4) var(--space-5);
+  font-size: var(--text-lg);
+  min-height: 56px;
+  border-radius: var(--radius-xl);
+}
+
+/* Input states */
+.input-error {
+  border-color: var(--color-error-400);
+}
+
+.input-error:focus {
+  border-color: var(--color-error-400);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.input-success {
+  border-color: var(--color-success-500);
+}
+
+.input-success:focus {
+  border-color: var(--color-success-500);
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.2);
+}
+
+/* ══════════════════════════════════════════
+   TEXTAREA
+   ══════════════════════════════════════════ */
+
+.textarea {
+  display: block;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface-input);
+  border: 1px solid var(--border-emphasis);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  line-height: var(--leading-normal);
+  transition: all var(--transition-normal);
+  resize: vertical;
+  min-height: 120px;
+}
+
+.textarea::placeholder {
+  color: var(--text-placeholder);
+}
+
+.textarea:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+.textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Auto-resize textarea */
+.textarea-auto {
+  resize: none;
+  overflow: hidden;
+}
+
+/* ══════════════════════════════════════════
+   SELECT
+   ══════════════════════════════════════════ */
+
+.select {
+  display: block;
+  width: 100%;
+  padding: var(--space-3) var(--space-4);
+  padding-right: var(--space-10);
+  background: var(--surface-input);
+  border: 1px solid var(--border-emphasis);
+  border-radius: var(--radius-lg);
+  font-size: var(--text-base);
+  color: var(--text-primary);
+  line-height: var(--leading-normal);
+  transition: all var(--transition-normal);
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.5)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--space-3) center;
+  min-height: 48px;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+.select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ══════════════════════════════════════════
+   CHECKBOX & RADIO
+   ══════════════════════════════════════════ */
+
+.checkbox-group,
+.radio-group {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  cursor: pointer;
+}
+
+.checkbox,
+.radio {
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--surface-input);
+  border: 2px solid var(--border-emphasis);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.checkbox {
+  border-radius: var(--radius-sm);
+}
+
+.radio {
+  border-radius: 50%;
+}
+
+.checkbox:checked,
+.radio:checked {
+  background: var(--color-primary-500);
+  border-color: var(--color-primary-500);
+}
+
+.checkbox:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.radio:checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Ccircle cx='5' cy='5' r='5' fill='white'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.checkbox:focus-visible,
+.radio:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* ══════════════════════════════════════════
+   INPUT WITH ICON
+   ══════════════════════════════════════════ */
+
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon-left {
+  position: absolute;
+  left: var(--space-4);
+  width: 20px;
+  height: 20px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.input-icon-right {
+  position: absolute;
+  right: var(--space-4);
+  width: 20px;
+  height: 20px;
+  color: var(--text-muted);
+}
+
+.input-wrapper .input.has-icon-left {
+  padding-left: calc(var(--space-4) + 28px);
+}
+
+.input-wrapper .input.has-icon-right {
+  padding-right: calc(var(--space-4) + 28px);
+}
+
+/* ══════════════════════════════════════════
+   FORM HELPERS
+   ══════════════════════════════════════════ */
+
+.form-hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  line-height: var(--leading-normal);
+}
+
+.form-error {
+  font-size: var(--text-xs);
+  color: var(--color-error-400);
+  line-height: var(--leading-normal);
+}
+
+/* ══════════════════════════════════════════
+   ERROR MESSAGE BOX
+   ══════════════════════════════════════════ */
+
+.error-message {
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-error-50);
+  border: 1px solid var(--color-error-300);
+  border-radius: var(--radius-lg);
+  color: var(--color-error-400);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
+.success-message {
+  padding: var(--space-3) var(--space-4);
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: var(--radius-lg);
+  color: var(--color-success-400);
+  font-size: var(--text-sm);
+  line-height: var(--leading-normal);
+}
+
