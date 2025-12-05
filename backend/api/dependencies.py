@@ -20,23 +20,26 @@ async def get_current_user(
     db: AsyncSession = fastapi_db_dep,
 ) -> User:
     access_token = request.cookies.get("access_token")
-    
+
     if not access_token:
         raise NotAuthenticatedException()
 
     payload = decode_access_token(access_token)
     if not payload:
         raise InvalidTokenException()
-    
+
     user_id = payload.get("sub")
     if not user_id:
         raise InvalidTokenException()
 
-    user = (await db.scalars(select(User).where(User.id == UUID(user_id)))).one_or_none()
+    user = (
+        await db.scalars(select(User).where(User.id == UUID(user_id)))
+    ).one_or_none()
 
     if not user:
         raise UserNotFoundException()
 
     return user
+
 
 current_user_dep = Annotated[User, Depends(get_current_user)]

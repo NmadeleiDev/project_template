@@ -30,30 +30,30 @@ class RequestLoggingMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request: Request, call_next):
         start_time = time.time()
         logger = logging.getLogger(__name__)
-        
+
         # Get client IP
         client_ip = request.client.host if request.client else "unknown"
-        
+
         # Log incoming request
         logger.info(
             f"Request: {request.method} {request.url.path} | "
             f"Client IP: {client_ip} | "
             f"Query params: {dict(request.query_params)}"
         )
-        
+
         # Process request
         response = await call_next(request)
-        
+
         # Calculate elapsed time
         elapsed_time = time.time() - start_time
-        
+
         # Log response
         logger.info(
             f"Response: {request.method} {request.url.path} | "
             f"Status: {response.status_code} | "
             f"Time elapsed: {elapsed_time:.4f}s"
         )
-        
+
         return response
 
 

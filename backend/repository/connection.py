@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from core.settings import postgres_settings
 from sqlalchemy.ext.asyncio import create_async_engine
 from sqlalchemy import create_engine
+from contextlib import contextmanager
 
 async_engine = create_async_engine(postgres_settings.async_app_database_url, echo=False)
 sync_engine = create_engine(postgres_settings.sync_app_database_url, echo=False)
@@ -50,10 +51,9 @@ async def get_async_db_for_router() -> AsyncGenerator[AsyncSession, None]:
 fastapi_db_dep = Depends(get_async_db_for_router)
 
 
-def get_sync_db(
-    commit_on_close: bool = True, rollback_on_error: bool = True
-) -> Generator[Session, None, None]:
-    """Sync database session dependency for API endpoints"""
+@contextmanager
+def sync_db_session(commit_on_close: bool = True, rollback_on_error: bool = True):
+    """Context manager for sync database sessions (useful for Celery tasks)"""
     session = SessionLocal()
     try:
         yield session

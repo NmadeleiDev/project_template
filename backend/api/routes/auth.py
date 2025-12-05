@@ -32,9 +32,9 @@ async def signup(
     db: AsyncSession = fastapi_db_dep,
 ) -> AuthResponse:
     # Check if user already exists
-    existing_user = (await db.scalars(
-        select(User).where(User.email == request.email)
-    )).one_or_none()
+    existing_user = (
+        await db.scalars(select(User).where(User.email == request.email))
+    ).one_or_none()
 
     if existing_user:
         raise UserAlreadyExistsException()
@@ -60,9 +60,9 @@ async def signin(
     db: AsyncSession = fastapi_db_dep,
 ) -> AuthResponse:
     # Find user
-    user = (await db.scalars(
-        select(User).where(User.email == request.email)
-    )).one_or_none()
+    user = (
+        await db.scalars(select(User).where(User.email == request.email))
+    ).one_or_none()
 
     if not user or not verify_password(request.password, user.hashed_password):
         raise InvalidCredentialsException()
