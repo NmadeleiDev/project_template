@@ -10,7 +10,7 @@ Full-stack application with a Python/FastAPI backend and Vue 3 frontend.
 backend/
 ├── api/          # API layer: FastAPI routes, schemas, auth, exceptions
 ├── service/      # Service layer: intermediary between API and domain
-├── domain/       # Domain layer: business logic + Celery task definitions
+├── domain/       # Domain layer: business logic + task definitions
 ├── repository/   # Repository layer: SQLAlchemy models, DB operations, Alembic migrations
 └── core/         # Core utilities: settings, logging, Sentry
 ```
@@ -20,7 +20,7 @@ backend/
 - Dependencies flow inward (API → Service → Domain → Repository)
 - Pydantic for API schemas, SQLAlchemy for ORM
 - Alembic for database migrations
-- Celery for async task processing
+- Taskiq for async task processing
 
 ### Frontend (Vue 3 + TypeScript)
 
@@ -63,7 +63,7 @@ frontend/src/
    ```bash
    make backend-up
    ```
-   This starts: PostgreSQL, Redis, API server, Celery worker, Flower, and Traefik.
+   This starts: PostgreSQL, Redis, API server, Taskiq worker, Flower, and Traefik.
 
 4. **Start frontend (separate terminal):**
    ```bash

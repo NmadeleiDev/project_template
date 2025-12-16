@@ -7,11 +7,9 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from api.exceptions import APIException
 from api.routes import auth, user
 from core.settings import app_settings
-from core.utils import ensure_celery_database
 
 
 async def lifespan(app: FastAPI):
-    await ensure_celery_database()
     yield
 
 

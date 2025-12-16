@@ -24,7 +24,6 @@ class PostgresSettings(BaseSettings):
     user: str = Field(default="app", description="Database user")
     password: str = Field(default="passwd", description="Database password")
     app_db: str = Field(default="postgres", description="Database name")
-    celery_db: str = Field(default="celery", description="Celery database name")
 
     @property
     def sync_app_database_url(self) -> str:
@@ -33,11 +32,6 @@ class PostgresSettings(BaseSettings):
     @property
     def async_app_database_url(self) -> str:
         return f"postgresql+asyncpg://{self.user}:{self.password}@{self.host}:{self.port}/{self.app_db}"
-
-    @property
-    def celery_backend_url(self) -> str:
-        return f"db+postgresql://{self.user}:{self.password}@{self.host}:{self.port}/{self.celery_db}"
-
 
 postgres_settings = PostgresSettings()
 
@@ -92,12 +86,3 @@ class JWTSettings(BaseSettings):
 
 jwt_settings = JWTSettings()
 
-
-class CelerySettings(BaseSettings):
-    model_config = pydantic_settings.SettingsConfigDict(env_prefix="celery_")
-
-    concurrency: int = Field(default=4, description="Celery concurrency")
-    flower_port: int = Field(default=5555, description="Flower port")
-
-
-celery_settings = CelerySettings()

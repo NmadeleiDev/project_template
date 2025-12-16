@@ -53,7 +53,7 @@ fastapi_db_dep = Depends(get_async_db_for_router)
 
 @contextmanager
 def sync_db_session(commit_on_close: bool = True, rollback_on_error: bool = True):
-    """Context manager for sync database sessions (useful for Celery tasks)"""
+    """Context manager for sync database sessions (useful for Taskiq tasks)"""
     session = SessionLocal()
     try:
         yield session

@@ -100,7 +100,7 @@ services:
       - "app"
     build:
       context: ./backend
-    command: python main.py celery-worker
+    command: python main.py worker
     volumes:
       - ./backend:/app
     env_file:
@@ -110,27 +110,3 @@ services:
         condition: service_healthy
       redis:
         condition: service_healthy
-
-  flower:
-    profiles:
-      - "backend"
-      - "app"
-    build:
-      context: ./backend
-      dockerfile: ./Dockerfile
-    command: python main.py flower
-    volumes:
-      - ./backend:/app
-    env_file:
-      - ./backend/.env
-    ports:
-      - "5555:5555"
-    depends_on:
-      redis:
-        condition: service_healthy
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.flower.rule=Host(`learrrner-local.com`) && PathPrefix(`/flower`)"
-      - "traefik.http.services.flower.loadbalancer.server.port=5555"
-      - "traefik.http.middlewares.flower-strip.stripprefix.prefixes=/flower"
-      - "traefik.http.routers.flower.middlewares=flower-strip"

@@ -7,8 +7,6 @@ from pathlib import Path
 import logging
 from core.logging import setup_logging
 from core.sentry import init_sentry
-from core.settings import celery_settings
-from core.utils import ensure_celery_database
 
 
 @click.group()
@@ -36,32 +34,15 @@ def serve(host, port, reload, workers):
 
 
 @cli.command()
-def celery_worker():
-    """Run the celery worker"""
-    asyncio.run(ensure_celery_database())
+def worker():
+    """Run the taskiq worker"""
     subprocess.run(
         [
-            "celery",
-            "-A",
-            "domain.celery_app",
+            "taskiq",
             "worker",
-            f"--concurrency={celery_settings.concurrency}",
-            "--loglevel=info",
-        ],
-        check=True,
-    )
-
-
-@cli.command()
-def flower():
-    """Run the flower server"""
-    subprocess.run(
-        [
-            "celery",
-            "-A",
-            "domain.celery_app",
-            "flower",
-            f"--port={celery_settings.flower_port}",
+            "domain.taskiq_broker:broker",
+            "domain.taskiq_tasks",
+            "--fs-discover",
         ],
         check=True,
     )
