@@ -20,5 +20,6 @@ endif
 	docker compose --profile create_migration run --rm backend python main.py generate-migration -m "$(MESSAGE)"
 	@echo "Cleaning up..."
 	docker compose --profile create_migration down
+	docker compose --profile backend down
 	@echo "Migration created successfully!"
 
