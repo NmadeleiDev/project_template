@@ -1,4 +1,4 @@
-# Project Template
+# Project Documentation
 
 Full-stack application with a Python/FastAPI backend and Vue 3 frontend.
 
