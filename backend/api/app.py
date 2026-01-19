@@ -7,10 +7,13 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from api.exceptions import APIException
 from api.routes import auth, user
 from core.settings import app_settings
+from domain.taskiq_broker import broker
 
 
 async def lifespan(app: FastAPI):
+    await broker.startup()
     yield
+    await broker.shutdown()
 
 
 app = FastAPI(
