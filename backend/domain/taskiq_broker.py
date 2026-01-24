@@ -13,7 +13,7 @@ if sentry_settings.enabled:
     )
 
 # Redis connection URL for broker
-REDIS_URL = f"redis://{redis_settings.host}:{redis_settings.port}/0"
+REDIS_URL = f"redis://{redis_settings.host}:{redis_settings.port}/{redis_settings.db}"
 
 # Create result backend
 result_backend = RedisAsyncResultBackend(REDIS_URL)
