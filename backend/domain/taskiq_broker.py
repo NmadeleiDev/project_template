@@ -20,7 +20,7 @@ result_backend = RedisAsyncResultBackend(REDIS_URL)
 
 # Create broker with result backend and middleware
 broker = (
-    ListQueueBroker(REDIS_URL)
+    ListQueueBroker(REDIS_URL, queue_name=redis_settings.queue_name)
     .with_result_backend(result_backend)
     .with_middlewares(ProgressStateMiddleware())
 )

@@ -42,6 +42,7 @@ class RedisSettings(BaseSettings):
     host: str = Field(default="localhost", description="Redis host")
     port: int = Field(default=6379, description="Redis port")
     db: int = Field(default=0, description="Redis database")
+    queue_name: str = Field(default="CHANGE_ME", description="Redis queue name")
 
     @property
     def dsn(self) -> str:
