@@ -1,0 +1,10 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Database
+metadata:
+  name: <PROJECT POSTGRES DATABASE NAME>
+  namespace: cnpg-system
+spec:
+  name: <PROJECT POSTGRES DATABASE NAME>
+  owner: app
+  cluster:
+    name: <PROJECT POSTGRES CLUSTER NAME>

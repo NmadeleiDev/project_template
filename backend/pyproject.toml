@@ -1,3 +1,145 @@
+[build-system]
+requires = ["setuptools>=68.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "backend"
+version = "1.0.0"
+description = "Backend API for project template"
+requires-python = ">=3.11"
+
 [tool.pyrefly]
 # Configure the backend directory as the Python root for import resolution
 search-path = ["."]
+
+[tool.black]
+line-length = 100
+target-version = ['py311']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+  | migrations
+)/
+'''
+
+[tool.ruff]
+# Line length to match Black
+line-length = 100
+
+# Python version
+target-version = "py311"
+
+# Directories to exclude
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "migrations",
+]
+
+[tool.ruff.lint]
+# Enable specific rule sets
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+]
+
+# Ignore specific rules
+ignore = [
+    "E501",  # line too long (handled by black)
+    "B008",  # do not perform function calls in argument defaults (FastAPI Depends pattern)
+    "UP007", # Use X | Y for type annotations (prefer Optional[] for clarity)
+]
+
+# Allow autofix for all enabled rules
+fixable = ["ALL"]
+unfixable = []
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+# Allow unused imports in __init__.py
+"__init__.py" = ["F401"]
+# Allow print statements in main.py (CLI tool)
+"main.py" = ["T201"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["api", "service", "domain", "repository", "core"]
+force-single-line = false
+lines-after-imports = 2
+
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+check_untyped_defs = true
+disallow_untyped_calls = false
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+follow_imports = "normal"
+ignore_missing_imports = true
+strict_optional = true
+show_error_codes = true
+
+# Directories to check
+files = [
+    "api",
+    "service",
+    "domain",
+    "repository",
+    "core",
+    "main.py",
+]
+
+# Directories to exclude
+exclude = [
+    "migrations",
+    "tests",
+    "__pycache__",
+]
+
+[[tool.mypy.overrides]]
+module = "tests.*"
+ignore_errors = true
+
+[tool.pytest.ini_options]
+# See pytest.ini for pytest configuration

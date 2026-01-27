@@ -10,7 +10,8 @@ Structure:
 - exceptions.py: Custom exceptions for the API.
 - dependencies.py: Shared FastAPI dependencies (e.g. get_current_user).
 - routes: Directory containing the API routes.
-- security.py: Password hashing and JWT utilities for authentication.
+
+Note: Password hashing and JWT utilities are in service/security.py (service layer).
 """
 
 from api.app import app

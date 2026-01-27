@@ -1,0 +1,39 @@
+[run]
+# Coverage.py configuration
+source = .
+omit =
+    */tests/*
+    */migrations/*
+    */__pycache__/*
+    */venv/*
+    */virtualenv/*
+    */.venv/*
+    main.py
+    conftest.py
+
+[report]
+# Fail if coverage is below threshold
+fail_under = 80
+
+# Show missing lines in report
+show_missing = True
+
+# Exclude lines from coverage
+exclude_lines =
+    # Standard exclusions
+    pragma: no cover
+    def __repr__
+    raise AssertionError
+    raise NotImplementedError
+    if __name__ == .__main__.:
+    if TYPE_CHECKING:
+    @abstractmethod
+    @abc.abstractmethod
+
+    # Defensive programming
+    if 0:
+    if False:
+    pass
+
+[html]
+directory = htmlcov

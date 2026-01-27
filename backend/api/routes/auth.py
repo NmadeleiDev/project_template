@@ -1,13 +1,10 @@
 from fastapi import APIRouter, Response, status
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.exceptions import InvalidCredentialsException, UserAlreadyExistsException
 from api.schemas import AuthResponse, SignInRequest, SignUpRequest
-from api.security import create_access_token, get_password_hash, verify_password
 from core.settings import app_settings, jwt_settings
 from repository.connection import fastapi_db_dep
-from repository.models import User
+from service.auth_service import AuthService
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
@@ -31,23 +28,28 @@ async def signup(
     response: Response,
     db: AsyncSession = fastapi_db_dep,
 ) -> AuthResponse:
-    # Check if user already exists
-    existing_user = (
-        await db.scalars(select(User).where(User.email == request.email))
-    ).one_or_none()
+    """
+    Register a new user account.
 
-    if existing_user:
-        raise UserAlreadyExistsException()
+    Creates a new user with email and password, then returns a JWT token
+    in an HTTP-only cookie for subsequent authenticated requests.
 
-    # Create new user
-    hashed_password = get_password_hash(request.password)
-    user = User(email=request.email, hashed_password=hashed_password)
-    db.add(user)
-    await db.flush()
-    await db.refresh(user)
+    Args:
+        request: Signup request with email and password
+        response: FastAPI response object for setting cookies
+        db: Database session (injected)
 
-    # Create token and set cookie
-    token = create_access_token({"sub": str(user.id)})
+    Returns:
+        AuthResponse: Success message
+
+    Raises:
+        UserAlreadyExistsException (40001): Email already registered
+    """
+    # Delegate to service layer
+    auth_service = AuthService(db)
+    user, token = await auth_service.signup_user(request.email, request.password)
+
+    # Set authentication cookie
     set_auth_cookie(response, token)
 
     return AuthResponse(message="User created successfully")
@@ -59,16 +61,28 @@ async def signin(
     response: Response,
     db: AsyncSession = fastapi_db_dep,
 ) -> AuthResponse:
-    # Find user
-    user = (
-        await db.scalars(select(User).where(User.email == request.email))
-    ).one_or_none()
+    """
+    Authenticate user and create session.
 
-    if not user or not verify_password(request.password, user.hashed_password):
-        raise InvalidCredentialsException()
+    Validates user credentials and returns a JWT token in an HTTP-only
+    cookie for subsequent authenticated requests.
 
-    # Create token and set cookie
-    token = create_access_token({"sub": str(user.id)})
+    Args:
+        request: Signin request with email and password
+        response: FastAPI response object for setting cookies
+        db: Database session (injected)
+
+    Returns:
+        AuthResponse: Success message
+
+    Raises:
+        InvalidCredentialsException (40101): Invalid email or password
+    """
+    # Delegate to service layer
+    auth_service = AuthService(db)
+    user, token = await auth_service.signin_user(request.email, request.password)
+
+    # Set authentication cookie
     set_auth_cookie(response, token)
 
     return AuthResponse(message="Signed in successfully")
@@ -76,5 +90,16 @@ async def signin(
 
 @router.post("/signout", response_model=AuthResponse)
 async def signout(response: Response) -> AuthResponse:
+    """
+    Sign out current user.
+
+    Clears the JWT authentication cookie, effectively logging out the user.
+
+    Args:
+        response: FastAPI response object for clearing cookies
+
+    Returns:
+        AuthResponse: Success message
+    """
     response.delete_cookie(key="access_token")
     return AuthResponse(message="Signed out successfully")

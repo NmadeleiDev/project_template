@@ -1,0 +1,20 @@
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: main-server-stripprefix
+  namespace: <PROJECT NAMESPACE>
+spec:
+  stripPrefix:
+    prefixes:
+      - /api
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: redirect-to-https
+  namespace: <PROJECT NAMESPACE>
+spec:
+  redirectScheme:
+    scheme: https
+    permanent: true
+

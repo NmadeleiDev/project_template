@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: worker
+  name: worker
+  namespace: <PROJECT NAMESPACE>
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: worker
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: worker
+    spec:
+      containers:
+        - image: harbor.darwinapps.com/<PROJECT BACKEND DOCKER IMAGE NAME>/backend:latest
+          name: worker
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              memory: 1Gi
+              cpu: "0.1"
+          command: ["python", "main.py", "worker"]
+          env:
+            - name: POSTGRES_APP_DB
+              value: "<PROJECT POSTGRES DATABASE NAME>"
+            - name: POSTGRES_CHECKPOINTER_DB
+              value: "<PROJECT POSTGRES DATABASE NAME>"
+            - name: STORAGE_BACKEND
+              value: "s3"
+            - name: REDIS_HOST
+              value: "redis.redis.svc.cluster.local"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_DB
+              value: "0"
+            - name: STORAGE_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ACCESS_KEY
+            - name: STORAGE_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_SECRET_KEY
+            - name: STORAGE_S3_ENDPOINT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ENDPOINT_URL
+            - name: STORAGE_BASE_DIR
+              value: "uploads"
+            - name: STORAGE_BUCKET_NAME
+              value: "<PROJECT STORAGE BUCKET NAME>"
+            - name: SECRET_KEY
+              value: "G2skrsVMnPCc5vTcG7aGNnfrymWUHYLn6LQtDaN82WtaVE2a"
+            - name: WEBHOOK_BASE_URL
+              value: "https://messenger.darwinapps.com/api"
+            - name: LANGSMITH_TRACING
+              value: "true"
+            - name: LANGSMITH_PROJECT
+              value: "<PROJECT LANGSMITH PROJECT NAME>"
+          envFrom:
+            - secretRef:
+                name: llm-providers-secret
+            - secretRef:
+                name: qdrant-secret
+            - secretRef:
+                name: postgres-secret
+            - secretRef:
+                name: minio-secret
+      imagePullSecrets:
+        - name: harbor-registry-secret
+      nodeSelector:
+        kubernetes.io/arch: amd64

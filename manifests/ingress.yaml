@@ -1,0 +1,33 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: main-ingress
+  namespace: <PROJECT NAMESPACE>
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    cert-manager.io/cluster-issuer: "prod-issuer"
+    traefik.ingress.kubernetes.io/router.middlewares: main-server-stripprefix@kubernetescrd
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: <PROJECT DOMAIN NAME>
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+      - path: /api
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - <PROJECT DOMAIN NAME>
+    secretName: main-tls

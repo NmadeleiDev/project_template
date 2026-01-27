@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app.kubernetes.io/name: backend
+  name: backend
+  namespace: <PROJECT NAMESPACE>
+spec:
+  replicas: 1
+  revisionHistoryLimit: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: backend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: backend
+    spec:
+      initContainers:
+        - name: migrate
+          image: harbor.darwinapps.com/<PROJECT BACKEND DOCKER IMAGE NAME>/backend:latest
+          command: ["python", "main.py", "upgrade-database"]
+          imagePullPolicy: Always
+          env:
+            - name: POSTGRES_APP_DB
+              value: "<PROJECT POSTGRES DATABASE NAME>"
+            - name: POSTGRES_CHECKPOINTER_DB
+              value: "<PROJECT POSTGRES DATABASE NAME>"
+          envFrom:
+            - secretRef:
+                name: postgres-secret
+      containers:
+        - image: harbor.darwinapps.com/po-darwin/backend:latest
+          name: backend
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              memory: 500Mi
+              cpu: "0.5"
+          command: ["python", "main.py", "serve", "--host", "0.0.0.0", "--port", "80"]
+          env:
+            - name: POSTGRES_APP_DB
+              value: "<PROJECT POSTGRES DATABASE NAME>"
+            - name: POSTGRES_CHECKPOINTER_DB
+              value: "<PROJECT POSTGRES DATABASE NAME>"
+            - name: STORAGE_BACKEND
+              value: "s3"
+            - name: REDIS_HOST
+              value: "redis.redis.svc.cluster.local"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_DB
+              value: "0"
+            - name: STORAGE_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ACCESS_KEY
+            - name: STORAGE_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_SECRET_KEY
+            - name: STORAGE_S3_ENDPOINT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: minio-secret
+                  key: MINIO_ENDPOINT_URL
+            - name: STORAGE_BASE_DIR
+              value: "uploads"
+            - name: STORAGE_BUCKET_NAME
+              value: "<PROJECT STORAGE BUCKET NAME>"
+            - name: SECRET_KEY
+              value: "G2skrsVMnPCc5vTcG7aGNnfrymWUHYLn6LQtDaN82WtaVE2a"
+            - name: WEBHOOK_BASE_URL
+              value: "https://messenger.darwinapps.com/api"
+            - name: LANGSMITH_TRACING
+              value: "true"
+            - name: LANGSMITH_PROJECT
+              value: "<PROJECT LANGSMITH PROJECT NAME>"
+          envFrom:
+            - secretRef:
+                name: llm-providers-secret
+            - secretRef:
+                name: qdrant-secret
+            - secretRef:
+                name: postgres-secret
+            - secretRef:
+                name: minio-secret
+      imagePullSecrets:
+        - name: harbor-registry-secret
+      nodeSelector:
+        kubernetes.io/arch: amd64
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: <PROJECT NAMESPACE>
+spec:
+  selector:
+    app.kubernetes.io/name: backend
+  ports:
+    - port: 80
+      targetPort: 80
+      name: http
+  type: ClusterIP
