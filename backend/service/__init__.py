@@ -9,6 +9,8 @@ Structure:
 - base_service.py: Base service class with common utilities
 - auth_service.py: Authentication business logic
 - user_service.py: User management business logic
+- security.py: Password hashing and JWT utilities
+- exceptions.py: Custom exceptions used by service and API layers
 """
 
 from service.auth_service import AuthService
