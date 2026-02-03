@@ -1,7 +1,7 @@
 """
-API Exceptions.
+Service Exceptions.
 
-This module defines all exceptions used in the API layer.
+This module defines all exceptions used by the Service and API layers.
 
 Exception Hierarchy:
     APIException (base)
