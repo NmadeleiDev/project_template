@@ -21,7 +21,7 @@ from fastapi import Depends, Request
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.exceptions import (
+from service.exceptions import (
     InvalidTokenException,
     NotAuthenticatedException,
     UserNotFoundException,

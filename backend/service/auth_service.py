@@ -8,7 +8,7 @@ and credential validation.
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from api.exceptions import InvalidCredentialsException, UserAlreadyExistsException
+from service.exceptions import InvalidCredentialsException, UserAlreadyExistsException
 from service.security import create_access_token, get_password_hash, verify_password
 from repository.models import User
 from service.base_service import BaseService

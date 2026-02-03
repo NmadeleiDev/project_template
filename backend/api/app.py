@@ -4,7 +4,7 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from api.exceptions import APIException
+from service.exceptions import APIException
 from api.routes import auth, user
 from core.settings import app_settings
 from domain.taskiq_broker import broker
